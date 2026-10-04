@@ -1,0 +1,14 @@
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/croutine.c
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+09_driver\croutine.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
+09_driver\croutine.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+09_driver\croutine.o: ../Core/Inc/FreeRTOSConfig.h
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/croutine.h
+09_driver\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
