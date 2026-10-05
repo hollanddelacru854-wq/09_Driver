@@ -41,7 +41,7 @@ typedef enum
 } proportion_t;
 
 
-//灯开关的函数指针
+//灯开关的接口
 typedef struct
 {
     led_status_t (*pf_led_on)  (void);/* LED Operation completed successfu   */
@@ -49,13 +49,13 @@ typedef struct
 } led_operations_t;
 
 
-//获取当前的时间戳的函数指针（这里的函数指针就是对外接口，实际上指向的就是实现功能的函数）
+//获取当前时间戳的接口（结构体里存函数指针）
 typedef struct
 {
     led_status_t (*pf_get_time_ms)  ( uint32_t * const );/* LED Op           */
 } time_base_ms_t;
 
-//OS层的延时函数指针
+//OS层的延时接口
 #ifdef OS_SUPPORTING
 typedef struct
 {
@@ -63,7 +63,8 @@ typedef struct
 } os_delay_t;
 #endif //OS_SUPPORTING
 
-//实现灯控制的函数指针（驱动内部实现，不依赖外部）
+
+//实现灯控制的函数指针（驱动内部实现，不依赖外部，直接使用裸露的函数指针即可）
 //参数解释：/*Cycle_time[ms]*/		/* blink_times[times]*/		/*proportion_on_off*/
 typedef led_status_t (*pf_led_control_t)(bsp_led_driver_t * const self,uint32_t ,uint32_t ,proportion_t);
 
@@ -77,20 +78,24 @@ typedef struct bsp_led_driver
     uint8_t is_inited;
 
     //一些变量（有关灯这个对象）
-    /* The whole time of                   blink */
+    
+	//闪烁周期
     uint32_t cycle_time_ms;
 	
 	
-    /* The times of blink                        */
+    //闪烁次数
     uint32_t blink_times;
 	
-    /* The relationship of light on and off time */
+    //亮灭比
     proportion_t proportion_on_off;
 
 	
     //一些指向结构体的指针（依赖外部接口，利用结构体指针实现解耦）
     
+	//开关灯的接口
     led_operations_t *p_led_opes_inst;
+	
+	//时基接口
     time_base_ms_t *p_time_base_ms;
 	
     //RTOS延时接口
@@ -99,8 +104,8 @@ typedef struct bsp_led_driver
 #endif //OS_SUPPORTING
 	
 	
-    /*************Target of APIs******************/
-	//函数指针（不依赖外部接口，驱动内部实现的函数，面向外部层）
+    
+	//灯控制的函数指针（不依赖外部接口，驱动内部实现的函数，面向外部层）
     pf_led_control_t pf_led_countroler;
 	
 }bsp_led_driver_t;
@@ -109,7 +114,7 @@ typedef struct bsp_led_driver
 
 //函数对外声明
 
-//构造一个对象
+//构造一个对象（led_driver的构造函数）
 led_status_t led_driver_inst (
                                       bsp_led_driver_t * const self, 
                                       led_operations_t * const led_ops,

@@ -593,6 +593,16 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\src\bsp_led_driver.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_led_handler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\src\bsp_led_handler.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_led_handler.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\inc\bsp_led_handler.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
