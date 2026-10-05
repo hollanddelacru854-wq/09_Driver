@@ -15,7 +15,7 @@
 #define DEBUG                    /* Enable DEBUG                             */
 #define DEBUG_OUT(X)   printf(X) /* DEBUG output infoto indicate statues     */
 
-
+typedef struct bsp_led_driver bsp_led_driver_t;
 
 
 //操作灯的状态码（操作灯的动作是否成功）
@@ -65,11 +65,11 @@ typedef struct
 
 //实现灯控制的函数指针（驱动内部实现，不依赖外部）
 //参数解释：/*Cycle_time[ms]*/		/* blink_times[times]*/		/*proportion_on_off*/
-typedef led_status_t (*pf_led_control_t)(uint32_t ,uint32_t ,proportion_t);
+typedef led_status_t (*pf_led_control_t)(bsp_led_driver_t * const self,uint32_t ,uint32_t ,proportion_t);
 
 
 //一个灯对象创建时需要的参数（即一个对象所拥有的性质）
-typedef struct 
+typedef struct bsp_led_driver
 {
 	
 	

@@ -5,6 +5,123 @@
 
 
 
+//灯闪烁函数（控制灯的具体动作函数）
+//从控制的抽象到闪烁的具体
+led_status_t led_blink( bsp_led_driver_t * self )
+{
+    led_status_t ret = LED_OK;
+	
+    //校验对象的存在
+    if( NULL == self || NOT_INITED == self->is_inited) 
+    {
+#ifdef DEBUG
+    DEBUG_OUT("LED_ERRORPARAMETER in led blink\r\n");
+#endif
+        ret = LED_ERRORPARAMETER;
+        return ret;
+    }
+    
+	//对象存在执行的逻辑
+    {
+        //创建局部变量承接传入的参数
+        uint32_t cycle_time_local;
+        uint32_t blink_times_local;
+        proportion_t proportion_local;
+        uint32_t led_toggle_time;
+
+		//接收所需参数
+        cycle_time_local = self->cycle_time_ms;		//闪烁周期
+        blink_times_local = self->blink_times;		//闪烁次数
+        proportion_local = self->proportion_on_off;		//亮灭比
+
+		
+        //判断亮灭比
+        if( PROPORTIONN_1_1 == proportion_local)
+        {
+            led_toggle_time = cycle_time_local / 2;
+        }
+        else if(PROPORTIONN_1_2 == proportion_local)
+        {
+            led_toggle_time = cycle_time_local / 3;
+        }
+        else if(PROPORTIONN_1_3 == proportion_local)
+        {
+            led_toggle_time = cycle_time_local / 4;
+        }
+        else 
+        {
+#ifdef DEBUG
+    DEBUG_OUT("LED_ERRORPARAMETER in led blink\r\n");
+#endif
+            ret = LED_ERRORPARAMETER;
+            return ret;
+        }
+
+        //结合闪烁次数、闪烁周期、亮灭比的点灯控制
+        for(uint32_t i = 0; i < blink_times_local; i++)
+        {
+
+            for(uint32_t j = 0; j < cycle_time_local; j++)
+            {
+				
+                self->p_os_time_delay->pf_os_delay_ms(1);
+                if( j < led_toggle_time )
+                {
+                    self->p_led_opes_inst->pf_led_on();
+                }
+                else
+                {
+                    self->p_led_opes_inst->pf_led_off();
+                }
+            }
+        }
+
+    }
+
+    return ret;
+}
+
+
+
+
+//驱动中控制灯的函数（驱动内部实现，外部通过指针间接调用）
+//参数：对象自己、一个闪烁周期、闪烁次数、亮灭比（占空比）
+static led_status_t led_control   (bsp_led_driver_t * const self, uint32_t cycle_time,
+									uint32_t blink_times, proportion_t proportion)
+{
+    
+    led_status_t ret = LED_OK;
+	
+    //确保对象存在并且已被初始化过
+    if( NULL == self || NOT_INITED == self->is_inited) 
+	{
+        ret = LED_ERRORPARAMETER;
+        return ret;
+    }
+
+	//保证参数在合理范围内
+    if( !( (cycle_time  < 10000 )&&(blink_times < 1000  )&&( (PROPORTIONN_1_3 <= proportion)
+		&& (PROPORTIONN_1_1 >= proportion) ) ) )
+    {
+        ret = LED_ERRORPARAMETER;
+        return ret;
+    }
+
+   //给一些变量赋值（传入的“需求”，即完成灯控制所需要的参数）
+    self->cycle_time_ms        =  cycle_time;
+    self->blink_times          = blink_times;
+    self->proportion_on_off    =  proportion;
+
+    //执行具体的灯闪烁逻辑
+    ret = led_blink(self);
+
+    return ret;
+}
+
+
+
+
+
 //LED对象的初始化
 led_status_t led_driver_init( bsp_led_driver_t * const self)
 {
@@ -36,6 +153,8 @@ led_status_t led_driver_init( bsp_led_driver_t * const self)
 
 
 
+
+//LED对象的构造函数
 led_status_t led_driver_inst (bsp_led_driver_t * const self, 
                               led_operations_t * const led_ops,
 #ifdef OS_SUPPORTING
