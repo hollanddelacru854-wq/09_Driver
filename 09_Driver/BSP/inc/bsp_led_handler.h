@@ -153,10 +153,10 @@ typedef struct bsp_led_handler
 #endif
 
     //灯控制接口
-    pf_led_control_t             pf_led_countroler;
+    pf_led_control_t pf_led_countroler;
     
 	//灯注册接口
-    pf_handler_led_register_t      pf_led_register;
+    pf_handler_led_register_t pf_led_register;
 
 }bsp_led_handler_t;
 

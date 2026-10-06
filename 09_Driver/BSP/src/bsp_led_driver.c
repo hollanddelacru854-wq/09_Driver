@@ -188,11 +188,13 @@ led_status_t led_driver_inst (bsp_led_driver_t * const self,
 #endif  // DEBUG
 
 
-	//指向具体真正的结构体
+	//函数指针指向驱动中的具体实现函数
     self->p_led_opes_inst =   led_ops;
     self->p_os_time_delay =  os_delay;
     self->p_time_base_ms  = time_base;
     
+	//驱动中实现的灯控制函数
+	self->pf_led_countroler = led_control;
 
 	//给一些变量赋值
     self->blink_times   =                   0;
