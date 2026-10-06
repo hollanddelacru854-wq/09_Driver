@@ -5,7 +5,7 @@
 
 
 
-//灯闪烁函数（控制灯的具体动作函数）
+//LED闪烁函数（控制LED的具体动作函数）
 //从控制的抽象到闪烁的具体
 led_status_t led_blink( bsp_led_driver_t * self )
 {
@@ -84,7 +84,7 @@ led_status_t led_blink( bsp_led_driver_t * self )
 
 
 
-//驱动中控制灯的函数（驱动内部实现，外部通过指针间接调用）
+//驱动中控制LED的函数（驱动内部实现，外部通过指针间接调用）
 //参数：对象自己、一个闪烁周期、闪烁次数、亮灭比（占空比）
 static led_status_t led_control   (bsp_led_driver_t * const self, uint32_t cycle_time,
 									uint32_t blink_times, proportion_t proportion)
@@ -107,12 +107,12 @@ static led_status_t led_control   (bsp_led_driver_t * const self, uint32_t cycle
         return ret;
     }
 
-   //给一些变量赋值（传入的“需求”，即完成灯控制所需要的参数）
+   //给一些变量赋值（传入的“需求”，即完成LED控制所需要的参数）
     self->cycle_time_ms        =  cycle_time;
     self->blink_times          = blink_times;
     self->proportion_on_off    =  proportion;
 
-    //执行具体的灯闪烁逻辑
+    //执行具体的LED闪烁逻辑
     ret = led_blink(self);
 
     return ret;
@@ -135,7 +135,7 @@ led_status_t led_driver_init( bsp_led_driver_t * const self)
         #ifdef DEBUG
         DEBUG_OUT("LED_ERRORPARAMETER\r\n");
         return LED_ERRORPARAMETER;
-        #endif // DEBUG
+        #endif
     }
     
 	
@@ -152,9 +152,7 @@ led_status_t led_driver_init( bsp_led_driver_t * const self)
 
 
 
-
-
-//LED对象的构造函数
+//LED对象的构造函数（主要作用就是接入依赖于外层的接口，交出该层向外提供的接口）
 led_status_t led_driver_inst (bsp_led_driver_t * const self, 
                               led_operations_t * const led_ops,
 #ifdef OS_SUPPORTING
@@ -180,25 +178,27 @@ led_status_t led_driver_inst (bsp_led_driver_t * const self,
 #ifdef DEBUG
         DEBUG_OUT("LED_ERRORRESOURCE\r\n");
         return LED_ERRORRESOURCE;
-#endif // DEBUG
+#endif
     }
 
 #ifdef DEBUG
     DEBUG_OUT("led inst start\r\n");
-#endif  // DEBUG
+#endif
 
 
-	//函数指针指向驱动中的具体实现函数
+	//函数指针指向具体实现函数（包括HAL层、OS层、驱动层、APP层）
+	//接入依赖于外层的接口
     self->p_led_opes_inst =   led_ops;
     self->p_os_time_delay =  os_delay;
     self->p_time_base_ms  = time_base;
     
-	//驱动中实现的灯控制函数
+	//连接到驱动中实现的LED控制函数
+	//交出该层向外提供的接口
 	self->pf_led_countroler = led_control;
 
 	//给一些变量赋值
-    self->blink_times   =                   0;
-    self->cycle_time_ms =                   0;
+    self->blink_times = 0;
+    self->cycle_time_ms = 0;
     self->proportion_on_off = PROPORTIONN_x_x;
     
 	//执行初始化操作
@@ -207,7 +207,7 @@ led_status_t led_driver_inst (bsp_led_driver_t * const self,
     {
 #ifdef DEBUG
         DEBUG_OUT("LED init failed\r\n");
-#endif  // DEBUG
+#endif
         self->p_led_opes_inst =  NULL;
         self->p_os_time_delay =  NULL;
         self->p_time_base_ms  =  NULL;

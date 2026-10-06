@@ -44,4 +44,6 @@
 09_driver\freertos.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
 09_driver\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 09_driver\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
+09_driver\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 09_driver\freertos.o: ..\BSP\inc\bsp_led_driver.h
+09_driver\freertos.o: ..\BSP\inc\bsp_led_handler.h
