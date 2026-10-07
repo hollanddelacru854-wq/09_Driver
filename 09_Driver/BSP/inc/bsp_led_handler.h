@@ -108,6 +108,17 @@ typedef struct
 
 } handler_os_critical_t;
 
+
+//RTOS中任务创建和任务删除接口
+typedef struct
+{
+    led_handler_status_t (*pf_os_thread_create ) ( void * const task_code, const char * const task_name, const uint32_t stack_depth, void * const parameters, uint32_t priority, void ** const task_handler);
+
+    led_handler_status_t (*pf_os_thread_delete ) (void *);
+
+} handler_os_thread_t;
+
+
 #endif
 
 
@@ -115,7 +126,12 @@ typedef struct
 typedef struct bsp_led_handler bsp_led_handler_t;
 
 
-//实现某个灯对象注册到handler的函数指针（注册进入handler进行统一管理）
+//指向handler层中实现统一控制LED的函数（向外提供handler层统一控制LED的接口）
+typedef led_handler_status_t (*pf_handler_led_control_t)(bsp_led_handler_t * const self, uint32_t , uint32_t , proportion_t, led_index_t const index);
+
+
+
+//实现某个灯对象注册到handler的函数指针（指向handler内部实现的注册函数的指针，即handler层向外提供的LED对象注册函数）（注册进入handler进行统一管理）
 typedef led_handler_status_t (*pf_handler_led_register_t)(bsp_led_handler_t * const self, bsp_led_driver_t * const led_driver, led_index_t * const index);
 
 
@@ -137,23 +153,35 @@ typedef struct bsp_led_handler
     //注册手册
     instance_registered_t instances;   
     
+	//创建的队列
+	void * queue_handler;
+	
+	//创建的任务
+    void * thread_handler;
+	
 	//时基接口
     handler_time_base_ms_t *p_time_base_ms;
     
 	//RTOS接口
 #ifdef OS_SUPPORTING
-	//延时
+	//延时操作
     os_delay_t *p_os_time_delay;
 	
-	//队列
+	//队列操作
     handler_os_queue_t *p_os_queue_interface;
 	
-	//临界区
+	//临界区操作
     handler_os_critical_t *p_os_critical;
+	
+	//任务操作
+	handler_os_thread_t *p_os_thread;
+
 #endif
 
+	//handler层统一控制LED的接口
+	pf_handler_led_control_t pf_led_countroler;
     
-	//灯注册接口
+	//LED注册接口
     pf_handler_led_register_t pf_led_register;
 
 }bsp_led_handler_t;
@@ -168,8 +196,9 @@ led_handler_status_t led_handler_inst (
                                   os_delay_t * const os_delay,
                                   handler_os_queue_t * const os_queue,
                                   handler_os_critical_t * const os_critical,
+								  handler_os_thread_t * const os_thread,
 #endif
-                                  handler_time_base_ms_t * const  time_base  );
+                                  handler_time_base_ms_t * const  time_base );
 
 
 #endif
