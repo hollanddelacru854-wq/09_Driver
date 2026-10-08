@@ -15,6 +15,160 @@ typedef struct {
 } led_event_t;
 
 
+
+
+//控制LED进行闪烁的函数（复制driver层中的led_control）
+led_handler_status_t led_blink_handler( bsp_led_driver_t * self )
+{
+    led_handler_status_t ret = HANDLER_OK;
+	
+    //校验对象的存在
+    if( NULL == self || NOT_INITED == self->is_inited ) 
+    {
+        
+#ifdef DEBUG
+    DEBUG_OUT("HANDLER_ERRORPARAMETER in led_blink_handler\r\n");
+#endif
+        ret = HANDLER_ERRORPARAMETER;
+        return ret;
+    }
+    
+	 
+	//对象存在执行的逻辑
+	{
+        //创建局部变量承接传入的参数
+        uint32_t cycle_time_local;
+        uint32_t blink_times_local;
+        proportion_t proportion_local;
+        uint32_t led_toggle_time;
+
+		//接收所需参数
+        cycle_time_local = self->cycle_time_ms;		//闪烁周期
+        blink_times_local = self->blink_times;		//闪烁次数
+        proportion_local = self->proportion_on_off;		//亮灭比
+
+		
+        //判断亮灭比
+        if( PROPORTIONN_1_1 == proportion_local)
+        {
+            led_toggle_time = cycle_time_local / 2;
+        }
+        else if(PROPORTIONN_1_2 == proportion_local)
+        {
+            led_toggle_time = cycle_time_local / 3;
+        }
+        else if(PROPORTIONN_1_3 == proportion_local)
+        {
+            led_toggle_time = cycle_time_local / 4;
+        }
+        else 
+        {
+#ifdef DEBUG
+    DEBUG_OUT("HANDLER_ERRORPARAMETER in led blink\r\n");
+#endif
+            ret = HANDLER_ERRORPARAMETER;
+            return ret;
+        }
+
+        //结合闪烁次数、闪烁周期、亮灭比的点灯控制
+        for(uint32_t i = 0; i < blink_times_local; i++)
+        {
+			
+            for(uint32_t j = 0; j < cycle_time_local; j++)
+            {
+                self->p_os_time_delay->pf_os_delay_ms(1);
+				
+                if( j < led_toggle_time )
+                {
+                    self->p_led_opes_inst->pf_led_on();
+                }
+                else
+                {
+                    self->p_led_opes_inst->pf_led_off();
+                }
+            }
+        }
+
+	}
+
+    return ret;
+}
+
+
+
+//接收请求并调用控制LED的函数（控制行为与请求的中间函数）
+//主要就是通过请求找到控制LED所需的参数，并调用控制LED的函数
+led_handler_status_t __event_process(bsp_led_handler_t * self, led_event_t msg)
+{
+	
+    led_handler_status_t ret = HANDLER_OK;
+
+    
+	
+    
+    if(!( ( MAX_INSTANCE_NUMBER >  msg.index ) || ( LED_NOT_INITIALIZED == msg.index ) ) )
+    {
+#ifdef DEBUG
+        DEBUG_OUT("HANDLER_ERRORRESOURCE __event_process index checking\r\n");
+#endif
+        return HANDLER_ERRORRESOURCE;
+    }
+
+    if( LED_NOT_INITIALIZED == msg.index )
+    {
+        
+#ifdef DEBUG
+        DEBUG_OUT("__event_process LED_NOT_INITIALIZED\r\n");
+#endif
+        return HANDLER_ERRORRESOURCE;
+    }
+
+    if( INIT_PATTERN == self -> instances.led_instance_group[msg.index] )
+    {
+       
+#ifdef DEBUG
+        DEBUG_OUT("HANDLER_ERRORRESOURCE at __event_process\r\n");
+#endif
+        return HANDLER_ERRORRESOURCE;
+    }
+    
+#ifdef DEBUG
+        DEBUG_OUT("Start Processing at __event_process\r\n");
+#endif
+    
+    printf("Cycle_time = [%d]", msg.Cycle_time);
+    printf("blink_times = [%d]", msg.blink_times);
+    printf("proportion_on_off = [%d]", msg.proportion_on_off);
+    printf("index = [%d]", msg.index);
+
+	
+	//通过请求结构体拿到控制LED所需要的参数
+    (self->instances.led_instance_group[msg.index])->cycle_time_ms = msg.Cycle_time;
+    (self->instances.led_instance_group[msg.index])->blink_times = msg.blink_times;
+    (self->instances.led_instance_group[msg.index])->proportion_on_off = msg.proportion_on_off;
+    
+	
+	//调用控制LED的函数
+    ret = led_blink_handler(self->instances.led_instance_group[msg.index]);
+    
+    if( HANDLER_OK != ret )
+    {
+#ifdef DEBUG
+        DEBUG_OUT("event processed failed at __event_process\r\n");
+#endif
+        return HANDLER_ERROR;
+    }
+    
+#ifdef DEBUG
+        DEBUG_OUT("event processed at __event_process\r\n");
+#endif
+
+}
+
+
+
+
+
 //初始化存放对象的数组
 static led_handler_status_t __array_init(bsp_led_driver_t * array[], uint32_t array_size)
 {
@@ -64,6 +218,8 @@ led_handler_status_t handler_thread( void *argument)
         if ( HANDLER_OK  == ret )
         {
             DEBUG_OUT("the message received \r\n");
+			
+			__event_process(p_led_handler, msg);
         }
         osDelay(1000);
     }

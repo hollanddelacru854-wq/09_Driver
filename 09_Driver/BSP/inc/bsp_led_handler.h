@@ -11,7 +11,7 @@
 #define OS_SUPPORTING            //有RTOS，有OS层
 #define DEBUG                    //调试模式
 #define DEBUG_OUT(X)   printf(X) //调试打印
-#define INIT_PATTERN  (0xA6A6A6A6) //初始化数组
+#define INIT_PATTERN  (bsp_led_driver_t *) (0xA6A6A6A6) //初始化数组
 
 typedef struct bsp_led_driver bsp_led_driver_t;
 
@@ -59,7 +59,7 @@ typedef enum
 //获取当前时间戳的接口
 typedef struct
 {
-    led_handler_status_t (*pf_get_time_ms)  ( uint32_t * const );
+    led_handler_status_t (*pf_get_time_ms) ( uint32_t * const );
 } handler_time_base_ms_t;
 
 
@@ -69,7 +69,7 @@ typedef struct
 //RTOS的延时接口
 typedef struct
 {
-    led_handler_status_t (*pf_os_delay_ms)  ( const uint32_t );
+    led_handler_status_t (*pf_os_delay_ms) ( const uint32_t );
 } handler_os_delay_t;
 
 
@@ -77,22 +77,22 @@ typedef struct
 typedef struct
 {
     //创建队列
-    led_handler_status_t (*pf_os_queue_create)  (uint32_t const item_num,
-                                                 uint32_t const item_size,
-                                                 void ** const queue_handler);
+    led_handler_status_t (*pf_os_queue_create) (uint32_t const item_num,
+                                                uint32_t const item_size,
+                                                void ** const queue_handler);
     
     //队列发送
-    led_handler_status_t (*pf_os_queue_put)  (void * const queue_handler,
-                                              void * const item,
-                                              uint32_t timeout );
+    led_handler_status_t (*pf_os_queue_put) (void * const queue_handler,
+                                             void * const item,
+                                             uint32_t timeout );
     
     //队列接收                                        
-    led_handler_status_t (*pf_os_queue_get)  (void * const queue_handler,
-											  void * const msg,
-											  uint32_t timeout );
+    led_handler_status_t (*pf_os_queue_get) (void * const queue_handler,
+											 void * const msg,
+											 uint32_t timeout );
     
     //队列删除                                      
-    led_handler_status_t (*pf_os_queue_delete )  (void * const queue_handler);
+    led_handler_status_t (*pf_os_queue_delete ) (void * const queue_handler);
 
 } handler_os_queue_t;
 
