@@ -36,6 +36,7 @@
 "09_driver\port.o"
 "09_driver\bsp_led_driver.o"
 "09_driver\bsp_led_handler.o"
+"09_driver\system_adaption.o"
 --library_type=microlib --strict --scatter "09_Driver\09_Driver.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

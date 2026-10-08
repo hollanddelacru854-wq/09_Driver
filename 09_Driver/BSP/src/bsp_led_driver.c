@@ -4,7 +4,7 @@
 #include "bsp_led_driver.h"
 
 
-
+#ifndef OS_SUPPORTING
 //LED闪烁函数（控制LED的具体动作函数）
 //从控制的抽象到闪烁的具体
 led_status_t led_blink( bsp_led_driver_t * self )
@@ -82,7 +82,9 @@ led_status_t led_blink( bsp_led_driver_t * self )
 }
 
 
+#endif
 
+#ifndef OS_SUPPORTING
 
 //驱动中控制LED的函数（驱动内部实现，外部通过指针间接调用）
 //参数：对象自己、一个闪烁周期、闪烁次数、亮灭比（占空比）
@@ -118,7 +120,7 @@ static led_status_t led_control   (bsp_led_driver_t * const self, uint32_t cycle
     return ret;
 }
 
-
+#endif
 
 
 
@@ -192,10 +194,13 @@ led_status_t led_driver_inst (bsp_led_driver_t * const self,
     self->p_os_time_delay =  os_delay;
     self->p_time_base_ms  = time_base;
     
+#ifndef OS_SUPPORTING
 	//连接到驱动中实现的LED控制函数
 	//交出该层向外提供的接口
 	self->pf_led_countroler = led_control;
 
+#endif
+	
 	//给一些变量赋值
     self->blink_times = 0;
     self->cycle_time_ms = 0;

@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F411xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\BSP\inc;..\BSP\src</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\BSP\inc;..\BSP\src;..\System</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -602,6 +602,21 @@
               <FileName>bsp_led_handler.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\BSP\inc\bsp_led_handler.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>System</GroupName>
+          <Files>
+            <File>
+              <FileName>system_adaption.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\System\system_adaption.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_adaption.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\System\system_adaption.h</FilePath>
             </File>
           </Files>
         </Group>
