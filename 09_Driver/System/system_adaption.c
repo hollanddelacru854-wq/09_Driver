@@ -19,7 +19,7 @@ led_status_t led_on_myown  (void)
 }
 
 
-#if 1
+
 //关LED
 led_status_t led_off_myown  (void)
 {
@@ -330,8 +330,7 @@ handler_os_thread_t handler1_os_thread = {
 
 
 
-#endif
-#if 1
+
 
 //handler层测试函数
 void Test_2()
@@ -387,29 +386,31 @@ void Test_2()
 //handler层测试函数（加上OS层）
 void Test_3()
 {
-	//****************************** 有关handler层 ************************//
+//	//****************************** 有关BSP层 ************************//
+//	
+//	//完成 led_handler 对象的构造
+//    printf("System Starting.....\r\n");
+//    led_handler_status_t ret = HANDLER_OK;   
+//    bsp_led_handler_t handler_1;         
+//    ret = led_handler_inst ( &handler_1,&handler_1_os_delay,&handler1_os_queue,
+//                            &handler1_os_critical,&handler1_os_thread,&handler1_time_base);
+//	
+//	
+//	//完成LED对象的构造
+//    led_status_t ret1 = LED_OK;
+//    bsp_led_driver_t led1;
+//    ret1 = led_driver_inst( &led1,&led_operations_myown,&os_delay_myown,&time_base_ms_myown); 
+//    
+//	
+//	if (HANDLER_OK == ret )
+//    {
+//        printf("handler_1 has been instantiated \r\n");
+//    }
+//    
+//	//****************************** 有关BSP层 ************************//
 	
-	//完成 led_handler 对象的构造
-    printf("System Starting.....\r\n");
-    led_handler_status_t ret = HANDLER_OK;   
-    bsp_led_handler_t handler_1;         
-    ret = led_handler_inst ( &handler_1,&handler_1_os_delay,&handler1_os_queue,
-                            &handler1_os_critical,&handler1_os_thread,&handler1_time_base);
 	
-	
-	//完成LED对象的构造
-    led_status_t ret1 = LED_OK;
-    bsp_led_driver_t led1;
-    ret1 = led_driver_inst( &led1,&led_operations_myown,&os_delay_myown,&time_base_ms_myown); 
-    
-	
-	if (HANDLER_OK == ret )
-    {
-        printf("handler_1 has been instantiated \r\n");
-    }
-    
-	//****************************** 有关handler层 ************************//
-	
+	led_handler_status_t ret = HANDLER_OK; 
 
     //****************************** 有关APP层 ************************//
 	
@@ -437,5 +438,43 @@ void Test_3()
 
 
 
- #endif
+
+//实现资源分配的函数（即对象的初始化和构造）
+//使APP层只需要完成注册和控制
+led_status_t system_init_resources ( void )
+{
+    
+
+    //****************************** 有关BSP层 ************************//
+	
+	//完成 led_handler 对象的构造
+    printf("System Starting.....\r\n");
+    led_handler_status_t ret = HANDLER_OK;   
+    bsp_led_handler_t handler_1;         
+    ret = led_handler_inst ( &handler_1,&handler_1_os_delay,&handler1_os_queue,
+                            &handler1_os_critical,&handler1_os_thread,&handler1_time_base);
+	
+	
+	//完成LED对象的构造
+    led_status_t ret1 = LED_OK;
+    bsp_led_driver_t led1;
+    ret1 = led_driver_inst( &led1,&led_operations_myown,&os_delay_myown,&time_base_ms_myown); 
+    
+	
+	if (HANDLER_OK == ret )
+    {
+        printf("handler_1 has been instantiated \r\n");
+    }
+    
+	//****************************** 有关BSP层 ************************//
+
+
+}
+
+
+
+
+
+
+
 

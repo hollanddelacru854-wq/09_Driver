@@ -133,6 +133,9 @@ led_handler_status_t thread_delete_handler1 ( void * const queue_handler);
 extern handler_os_thread_t handler1_os_thread ;            
 
 
+											  
+											  
+											  
 //handler层测试函数（加上OS层）
 void Test_3();
                 
@@ -144,7 +147,7 @@ void Test_3();
 				
 				
 
-
+//实现资源分配的函数（即对象的初始化和构造）
 led_status_t system_init_resources ( void );
                 
 

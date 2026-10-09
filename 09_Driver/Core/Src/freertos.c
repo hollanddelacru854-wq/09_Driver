@@ -547,18 +547,9 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   
-//  led_status_t ret = LED_OK;
-//  bsp_led_driver_t led1;	//对象一
-//  bsp_led_driver_t led2;	//对象二
-//	
 
-//  ret = led_driver_inst(&led1,&led_operations_myown,&os_delay_myown,&time_base_ms_myown);	//构造对象一
-//  ret = led_driver_inst(&led2,&led_operations_myown,&os_delay_myown,&time_base_ms_myown);	//构造对象二
-//	
-
-//  ret = led1.pf_led_countroler(&led1,5, 30, PROPORTIONN_1_1);	//控制对象一（即控制其闪烁）
-//  ret = led2.pf_led_countroler(&led2,2, 10, PROPORTIONN_1_1);	//控制对象二（即控制其闪烁）
 	
+
   printf("hello world\r\n");
   system_init_resources();
   Test_3();
